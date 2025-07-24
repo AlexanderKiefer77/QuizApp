@@ -66,32 +66,59 @@ function init() {
 }
 
 function showQuestion() {
+
+    if (currentQuestion >= questions.length) {
+        // todo
+    } else {
     let question = questions[currentQuestion]; // Variable für die erste Frage(Index 0) zwischen zu speichern
     document.getElementById('questiontext').innerHTML = question['question'];
     document.getElementById('answer_1').innerHTML = question['answer_1'];
     document.getElementById('answer_2').innerHTML = question['answer_2'];
     document.getElementById('answer_3').innerHTML = question['answer_3'];
     document.getElementById('answer_4').innerHTML = question['answer_4'];
+    document.getElementById('questionNumber').innerHTML = currentQuestion + 1; // für die Anzeige der Frage von (+1 da erste Frage 0 ist(Index) )
+    }
 }
 
 function answer(selection) {
     let question = questions[currentQuestion]; // Variable für angeklickte Antwort
-    console.log('Selected answer ist ', selection); // Ausloggen der angeklickten Antwort
+            console.log('Selected answer ist ', selection); // Ausloggen der angeklickten Antwort
+
     let selectedQuestionNumber = selection.slice(-1); // Variable für den letzten Wert(hier Zahl) von der angeklickte Antwort 
-    console.log('selectedQuestionNumber', selectedQuestionNumber); // Ausloggen von dem letzten Wert(Zahl) von der angeklickte Antwort 
-    console.log('Current question ist ', question['right_answer']); // Ausloggen von de "right_answer" (ebenfalls Zahl)
+            console.log('selectedQuestionNumber', selectedQuestionNumber); // Ausloggen von dem letzten Wert(Zahl) von der angeklickte Antwort 
+            console.log('Current question ist ', question['right_answer']); // Ausloggen von de "right_answer" (ebenfalls Zahl)
 
     let idOfRightAnswer = `answer_${question['right_answer']}`; // für richtige Antwort bei falscher Antwort anzeigen
 
 
     // Abfrage, ob die letzte Zahl aus der angeklickten Anwort = der Zahl von "right_answer" ist
     if (selectedQuestionNumber == question['right_answer']) {
-        console.log('Richtige Antwort');
+                console.log('Richtige Antwort');
         document.getElementById(selection).parentNode.classList.add('bg-success'); // class wird dem übergeordneten div (Element) hinzugefügt
         // document.getElementById(selection).classList.add('bg-success'); // class aus bootstrap wird dem div mit der ID hinzugefügt
         } else {
-        console.log('Falsche Antwort');
+                console.log('Falsche Antwort');
         document.getElementById(selection).parentNode.classList.add('bg-danger'); // class wird dem übergeordneten div (Element) hinzugefügt
         document.getElementById(idOfRightAnswer).parentNode.classList.add('bg-success'); // dadurch wird die richtige Antwort grün angezeigt
     }
+    document.getElementById('next-button').disabled = false; // macht den button anklickbar nachdem eine Antwort angeklickt wurde
 }
+
+function nextQuestion() {
+    currentQuestion++; // erhöht den Wert der Variable "currentQuestion" um 1    
+    document.getElementById('next-button').disabled = true; // macht den button wieder nicht anklickbar
+    resetAnswerButtons();
+    showQuestion(); 
+}
+
+function resetAnswerButtons() { // entfernt die Farben in den Antwordbuttons
+    document.getElementById('answer_1').parentNode.classList.remove('bg-danger');
+    document.getElementById('answer_1').parentNode.classList.remove('bg-success');
+    document.getElementById('answer_2').parentNode.classList.remove('bg-danger');
+    document.getElementById('answer_2').parentNode.classList.remove('bg-success');
+    document.getElementById('answer_3').parentNode.classList.remove('bg-danger');
+    document.getElementById('answer_3').parentNode.classList.remove('bg-success');
+    document.getElementById('answer_4').parentNode.classList.remove('bg-danger');
+    document.getElementById('answer_4').parentNode.classList.remove('bg-success');
+}
+
