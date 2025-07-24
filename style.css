@@ -1,1 +1,33 @@
+body {
+    background-color: #007AFF !important; /* durch !important wird dieser Wert über dem bootstrap gesetzt */
+}
 
+
+.container {
+    min-height: 100vh;
+    background-color: #007AFF !important; /* durch !important wird dieser Wert über dem bootstrap gesetzt */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quiz-card {
+    width: 30rem;
+}
+
+.question-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+}
+
+.quiz-answer-card:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.bg-success, .bg-danger {
+    color: white !important; /* durch !important wird dieser Wert über dem bootstrap gesetzt */
+}
