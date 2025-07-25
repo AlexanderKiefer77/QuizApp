@@ -26,7 +26,7 @@ let questions = [ // json
     },
     {
         "question": "Wie stellt man einen Text am BESTEN fett dar ?",
-        "answer_1": "&lt,strong&gt;",
+        "answer_1": "&lt;strong&gt;",
         "answer_2": "CSS nutzen",
         "answer_3": "&lt;bold&gt;",
         "answer_4": "&lt;b&gt;",
@@ -58,7 +58,12 @@ let questions = [ // json
     }
 ];
 
+let rightQuestions = 0; // Variable für Anzahl richtige Antworten
+
 let currentQuestion = 0; // Variable für Startfrage(Index)
+
+let AUDIO_SUCCESS = new Audio('./audio/success.mp3'); // Variable für success Audio Ton
+let AUDIO_FAIL = new Audio('./audio/fail.mp3');  // Variable für fail Audio Ton
 
 function init() {
     document.getElementById('all-questions').innerHTML = questions.length;
@@ -67,39 +72,53 @@ function init() {
 
 function showQuestion() {
 
-    if (currentQuestion >= questions.length) {
-        // todo
-    } else {
-    let question = questions[currentQuestion]; // Variable für die erste Frage(Index 0) zwischen zu speichern
-    document.getElementById('questiontext').innerHTML = question['question'];
-    document.getElementById('answer_1').innerHTML = question['answer_1'];
-    document.getElementById('answer_2').innerHTML = question['answer_2'];
-    document.getElementById('answer_3').innerHTML = question['answer_3'];
-    document.getElementById('answer_4').innerHTML = question['answer_4'];
-    document.getElementById('questionNumber').innerHTML = currentQuestion + 1; // für die Anzeige der Frage von (+1 da erste Frage 0 ist(Index) )
+    if (currentQuestion >= questions.length) { // show End Screen
+        document.getElementById('endScreen').style = '';
+        document.getElementById('questionBody').style = 'display: none;';
+        document.getElementById('amount-of-right-questions').innerHTML = rightQuestions;
+        document.getElementById('amount-Of-Questions').innerHTML = questions.length;
+        document.getElementById('headerimage').src = "./img/cup.png"; // ersetzt das Bild wenn fertig
+    } else {  // show Question
+        let percent = (currentQuestion + 1) / questions.length; // Variable für Prozent von Anzahl der Fragen auszurechnen
+        percent = Math.round(percent * 100); // Prozent von Anzahl der Fragen ausrechnen
+
+        document.getElementById('progress-bar').innerHTML = `${percent} %`; // zeigt den Prozentwert in der "progress-bar" an
+        document.getElementById('progress-bar').style = `width: ${percent}%;`; // schreibt den aktuellen Prozentwert in width der "progress-bar" rein
+
+        let question = questions[currentQuestion]; // Variable für die erste Frage(Index 0) zwischen zu speichern
+
+        document.getElementById('questiontext').innerHTML = question['question'];
+        document.getElementById('answer_1').innerHTML = question['answer_1'];
+        document.getElementById('answer_2').innerHTML = question['answer_2'];
+        document.getElementById('answer_3').innerHTML = question['answer_3'];
+        document.getElementById('answer_4').innerHTML = question['answer_4'];
+        document.getElementById('questionNumber').innerHTML = currentQuestion + 1; // für die Anzeige der Frage von (+1 da erste Frage 0 ist(Index) )
     }
 }
 
 function answer(selection) {
     let question = questions[currentQuestion]; // Variable für angeklickte Antwort
-            console.log('Selected answer ist ', selection); // Ausloggen der angeklickten Antwort
+    console.log('Selected answer ist ', selection); // Ausloggen der angeklickten Antwort
 
     let selectedQuestionNumber = selection.slice(-1); // Variable für den letzten Wert(hier Zahl) von der angeklickte Antwort 
-            console.log('selectedQuestionNumber', selectedQuestionNumber); // Ausloggen von dem letzten Wert(Zahl) von der angeklickte Antwort 
-            console.log('Current question ist ', question['right_answer']); // Ausloggen von de "right_answer" (ebenfalls Zahl)
+    console.log('selectedQuestionNumber', selectedQuestionNumber); // Ausloggen von dem letzten Wert(Zahl) von der angeklickte Antwort 
+    console.log('Current question ist ', question['right_answer']); // Ausloggen von de "right_answer" (ebenfalls Zahl)
 
     let idOfRightAnswer = `answer_${question['right_answer']}`; // für richtige Antwort bei falscher Antwort anzeigen
 
 
     // Abfrage, ob die letzte Zahl aus der angeklickten Anwort = der Zahl von "right_answer" ist
-    if (selectedQuestionNumber == question['right_answer']) {
-                console.log('Richtige Antwort');
+    if (selectedQuestionNumber == question['right_answer']) { // wenn richtigr Antwort angeklickt wurde
+        console.log('Richtige Antwort');
+        // document.getElementById(selection).classList.add('bg-success'); // class aus bootstrap würde dem div mit der ID hinzugefügt werden, besser der übergeordneten
         document.getElementById(selection).parentNode.classList.add('bg-success'); // class wird dem übergeordneten div (Element) hinzugefügt
-        // document.getElementById(selection).classList.add('bg-success'); // class aus bootstrap wird dem div mit der ID hinzugefügt
-        } else {
-                console.log('Falsche Antwort');
+        AUDIO_SUCCESS.play(); // spielt den succes Ton ab
+        rightQuestions++; // richtige Antworten werden um 1 hochgezählt   
+    } else {
+        console.log('Falsche Antwort');
         document.getElementById(selection).parentNode.classList.add('bg-danger'); // class wird dem übergeordneten div (Element) hinzugefügt
         document.getElementById(idOfRightAnswer).parentNode.classList.add('bg-success'); // dadurch wird die richtige Antwort grün angezeigt
+        AUDIO_FAIL.play(); // spielt den fail Ton ab
     }
     document.getElementById('next-button').disabled = false; // macht den button anklickbar nachdem eine Antwort angeklickt wurde
 }
@@ -108,7 +127,7 @@ function nextQuestion() {
     currentQuestion++; // erhöht den Wert der Variable "currentQuestion" um 1    
     document.getElementById('next-button').disabled = true; // macht den button wieder nicht anklickbar
     resetAnswerButtons();
-    showQuestion(); 
+    showQuestion();
 }
 
 function resetAnswerButtons() { // entfernt die Farben in den Antwordbuttons
@@ -122,3 +141,11 @@ function resetAnswerButtons() { // entfernt die Farben in den Antwordbuttons
     document.getElementById('answer_4').parentNode.classList.remove('bg-success');
 }
 
+function restartGame() { // Neustart
+    document.getElementById('headerimage').src = "./img/pencil.jpg"; // ersetzt das End Screen Bild wieder mit dem Question Bild
+    document.getElementById('questionBody').style = ''; // questtionBody wieder anzeigen
+    document.getElementById('endScreen').style = 'display: none'; // endscreen wieder ausblenden
+    rightQuestions = 0; // Variable für Anzahl richtige Antworten wieder auf 0 setzten
+    currentQuestion = 0; // Variable für Startfrage(Index) wieder auf 0 setzten
+    init();
+}
